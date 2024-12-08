@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Page</title>
+    <style>
+        body {
+            font-family: monospace;
+            font-size: medium;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* height: 10vh; */
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        .user-name {
+            vertical-align: top;
+            height: auto;
+        }
+        .container {
+            text-align: center;
+        }
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            vertical-align: top;
+            margin-bottom: 20px;
+        }
+        .search-bar input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            margin-right: 10px;
+        }
+        .search-bar button {
+            padding: 10px 15px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        /*
+        .page-size {
+            margin-bottom: 10px;
+        }
+        */
+        .page-size select {
+            padding: 10px;
+            font-size: 16px;
+        }
+        .results-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .results-list li {
+            margin-bottom: 10px;
+        }
+        .results-list a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .results-list a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div>
+        <h1 class="user-name">Welcome {{user}}</h1>
+    </div>
+    <div class="search-bar">
+        <input type="text" id="searchQuery" placeholder="Search any games on steam">
+        <button onclick="search()">Search</button>
+        <div class="page-size">
+            <!-- <label for="pageSize">Page Size: </label> -->
+            <select id="pageSize">
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+        </div>
+    </div>
+    <nav>
+        <ul class="results-list" id="resultsList">
+            <!-- Results will appear here -->
+        </ul>
+    </nav>
+</div>
+    
+<script>
+    function search() {
+        const query = document.getElementById('searchQuery').value;
+        const pageSize = document.getElementById('pageSize').value;
+        const resultsList = document.getElementById('resultsList');
+        const url = `{{ api_url }}?name=${query}&size=${pageSize}&page=0`
+        const apps = fetch(url)
+            .then(response => response.json())
+            .then(function(data) {
+                resultsList.innerHTML = '';
+                data.forEach(item => {
+                    const listItem = document.createElement('li');
+                    link = `{{ steam_base_url }}${item.appid}`;
+                    listItem.innerHTML = `<a href="${link}">${item.name}</a>`;
+                    resultsList.appendChild(listItem);
+                })
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
+</body>
+</html>
